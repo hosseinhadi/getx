@@ -12,7 +12,7 @@ import 'transitions_type.dart';
 
 class GetPageRoute<T> extends PageRoute<T> {
   GetPageRoute({
-    RouteSettings settings,
+    RouteSettings? settings,
     this.transitionDuration = const Duration(milliseconds: 300),
     this.opaque = true,
     this.parameter,
@@ -31,51 +31,48 @@ class GetPageRoute<T> extends PageRoute<T> {
     this.maintainState = true,
     bool fullscreenDialog = false,
     this.middlewares,
-  })  : assert(opaque != null),
-        assert(barrierDismissible != null),
-        assert(maintainState != null),
-        assert(fullscreenDialog != null),
-        reference = "$routeName: ${page.hashCode}",
+  })
+      : reference = "$routeName: ${page.hashCode}",
         super(settings: settings, fullscreenDialog: fullscreenDialog);
 
   @override
   final Duration transitionDuration;
 
-  final GetPageBuilder page;
+  final GetPageBuilder? page;
 
-  final String routeName;
+  final String? routeName;
 
   final String reference;
 
-  final CustomTransition customTransition;
+  final CustomTransition? customTransition;
 
-  final Bindings binding;
+  final Bindings? binding;
 
-  final Map<String, String> parameter;
+  final Map<String, String>? parameter;
 
-  final List<Bindings> bindings;
+  final List<Bindings>? bindings;
 
   @override
   final bool opaque;
 
-  final bool popGesture;
+  final bool? popGesture;
 
   @override
   final bool barrierDismissible;
 
-  final Transition transition;
+  final Transition? transition;
 
-  final Curve curve;
+  final Curve? curve;
 
-  final Alignment alignment;
+  final Alignment? alignment;
 
-  final List<GetMiddleware> middlewares;
-
-  @override
-  final Color barrierColor;
+  final List<GetMiddleware>? middlewares;
 
   @override
-  final String barrierLabel;
+  final Color? barrierColor;
+
+  @override
+  final String? barrierLabel;
 
   @override
   final bool maintainState;
@@ -93,8 +90,8 @@ class GetPageRoute<T> extends PageRoute<T> {
         route.willHandlePopInternally ||
         route.hasScopedWillPopCallback ||
         route.fullscreenDialog ||
-        route.animation.status != AnimationStatus.completed ||
-        route.secondaryAnimation.status != AnimationStatus.dismissed ||
+        route.animation!.status != AnimationStatus.completed ||
+        route.secondaryAnimation!.status != AnimationStatus.dismissed ||
         isPopGestureInProgress(route)) return false;
 
     return true;
@@ -105,17 +102,15 @@ class GetPageRoute<T> extends PageRoute<T> {
     assert(_isPopGestureEnabled(route));
 
     return _CupertinoBackGestureController<T>(
-      navigator: route.navigator,
-      controller: route.controller,
+      navigator: route.navigator!,
+      controller: route.controller!,
     );
   }
 
   @override
-  Widget buildPage(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
+  Widget buildPage(BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,) {
     //   Get.reference = settings.name ?? routeName;
     Get.reference = reference;
 
@@ -129,12 +124,12 @@ class GetPageRoute<T> extends PageRoute<T> {
       }
     }
 
-    final pageToBuild = middlewareRunner.runOnPageBuildStart(page);
+    final pageToBuild = middlewareRunner.runOnPageBuildStart(page)!;
     return middlewareRunner.runOnPageBuilt(pageToBuild());
   }
 
   static bool isPopGestureInProgress(PageRoute<dynamic> route) {
-    return route.navigator.userGestureInProgress;
+    return route.navigator!.userGestureInProgress;
   }
 
   bool get popGestureInProgress => isPopGestureInProgress(this);
@@ -156,7 +151,7 @@ class GetPageRoute<T> extends PageRoute<T> {
           linearTransition: hasCurve);
     }
     if (customTransition != null) {
-      return customTransition.buildTransition(
+      return customTransition!.buildTransition(
         context,
         finalCurve,
         alignment,
@@ -164,9 +159,9 @@ class GetPageRoute<T> extends PageRoute<T> {
         secondaryAnimation,
         popGesture ?? Get.defaultPopGesture
             ? _CupertinoBackGestureDetector<T>(
-                enabledCallback: () => _isPopGestureEnabled<T>(this),
-                onStartPopGesture: () => _startPopGesture<T>(this),
-                child: child)
+            enabledCallback: () => _isPopGestureEnabled<T>(this),
+            onStartPopGesture: () => _startPopGesture<T>(this),
+            child: child)
             : child,
       );
     }
@@ -185,9 +180,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.downToUp:
@@ -199,9 +194,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.upToDown:
@@ -213,17 +208,17 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.noTransition:
         return popGesture ?? Get.defaultPopGesture
             ? _CupertinoBackGestureDetector<T>(
-                enabledCallback: () => _isPopGestureEnabled<T>(this),
-                onStartPopGesture: () => _startPopGesture<T>(this),
-                child: child)
+            enabledCallback: () => _isPopGestureEnabled<T>(this),
+            onStartPopGesture: () => _startPopGesture<T>(this),
+            child: child)
             : child;
 
       case Transition.rightToLeft:
@@ -235,9 +230,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.zoom:
@@ -249,9 +244,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.fadeIn:
@@ -263,9 +258,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.rightToLeftWithFade:
@@ -277,9 +272,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.leftToRightWithFade:
@@ -291,9 +286,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.cupertino:
@@ -304,23 +299,23 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.size:
         return SizeTransitions().buildTransitions(
             context,
-            curve,
+            curve!,
             alignment,
             animation,
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.fade:
@@ -331,9 +326,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.topLevel:
@@ -344,9 +339,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       case Transition.native:
@@ -357,14 +352,14 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
 
       default:
         if (Get.customTransition != null) {
-          return Get.customTransition.buildTransition(
+          return Get.customTransition!.buildTransition(
               context, curve, alignment, animation, secondaryAnimation, child);
         }
 
@@ -375,9 +370,9 @@ class GetPageRoute<T> extends PageRoute<T> {
             secondaryAnimation,
             popGesture ?? Get.defaultPopGesture
                 ? _CupertinoBackGestureDetector<T>(
-                    enabledCallback: () => _isPopGestureEnabled<T>(this),
-                    onStartPopGesture: () => _startPopGesture<T>(this),
-                    child: child)
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture<T>(this),
+                child: child)
                 : child);
     }
   }
@@ -386,7 +381,7 @@ class GetPageRoute<T> extends PageRoute<T> {
   void dispose() {
     super.dispose();
     if (Get.smartManagement != SmartManagement.onlyBuilder) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         if (Get.reference != reference) {
           GetInstance().removeDependencyByRoute("$reference");
         }
@@ -402,8 +397,10 @@ class GetPageRoute<T> extends PageRoute<T> {
   }
 }
 
-const double _kBackGestureWidth = 20.0;
-const double _kMinFlingVelocity = 1.0;
+// const double _kBackGestureWidth = /*20.0*/ 50;
+const double _kBackGestureHeight = /*20.0*/ 250;
+// const double _kMinFlingVelocity = 1.0;
+const double _kMinFlingVelocity = 0.5;
 const int _kMaxDroppedSwipePageForwardAnimationTime = 800; // Milliseconds.
 
 // The maximum time for a page to get reset to it's original position if the
@@ -412,14 +409,11 @@ const int _kMaxPageBackAnimationTime = 300;
 
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   const _CupertinoBackGestureDetector({
-    Key key,
-    @required this.enabledCallback,
-    @required this.onStartPopGesture,
-    @required this.child,
-  })  : assert(enabledCallback != null),
-        assert(onStartPopGesture != null),
-        assert(child != null),
-        super(key: key);
+    Key? key,
+    required this.enabledCallback,
+    required this.onStartPopGesture,
+    required this.child,
+  }) : super(key: key);
 
   final Widget child;
 
@@ -434,14 +428,17 @@ class _CupertinoBackGestureDetector<T> extends StatefulWidget {
 
 class _CupertinoBackGestureDetectorState<T>
     extends State<_CupertinoBackGestureDetector<T>> {
-  _CupertinoBackGestureController<T> _backGestureController;
+  _CupertinoBackGestureController<T>? _backGestureController;
 
-  HorizontalDragGestureRecognizer _recognizer;
+  late VerticalDragGestureRecognizer _recognizer;
+
+  // late HorizontalDragGestureRecognizer _recognizer;
 
   @override
   void initState() {
     super.initState();
-    _recognizer = HorizontalDragGestureRecognizer(debugOwner: this)
+    // _recognizer = HorizontalDragGestureRecognizer(debugOwner: this)
+    _recognizer = VerticalDragGestureRecognizer(debugOwner: this)
       ..onStart = _handleDragStart
       ..onUpdate = _handleDragUpdate
       ..onEnd = _handleDragEnd
@@ -463,15 +460,17 @@ class _CupertinoBackGestureDetectorState<T>
   void _handleDragUpdate(DragUpdateDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController.dragUpdate(
-        _convertToLogical(details.primaryDelta / context.size.width));
+    _backGestureController!.dragUpdate(
+      // _convertToLogical(details.primaryDelta! / context.size!.width)!);
+        _convertToLogical(details.primaryDelta! / context.size!.height)!);
   }
 
   void _handleDragEnd(DragEndDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController.dragEnd(_convertToLogical(
-        details.velocity.pixelsPerSecond.dx / context.size.width));
+    _backGestureController!.dragEnd(_convertToLogical(
+      // details.velocity.pixelsPerSecond.dx / context.size!.width)!);
+        details.velocity.pixelsPerSecond.dx / context.size!.height)!);
     _backGestureController = null;
   }
 
@@ -487,17 +486,15 @@ class _CupertinoBackGestureDetectorState<T>
     if (widget.enabledCallback()) _recognizer.addPointer(event);
   }
 
-  double _convertToLogical(double value) {
+  double? _convertToLogical(double value) {
     switch (Directionality.of(context)) {
       case TextDirection.rtl:
         return -value;
       case TextDirection.ltr:
         return value;
+      default:
+        return value;
     }
-    // FIXME: shouldn't we return a default here?
-    //  or perhaps throw error
-    // ignore: avoid_returning_null
-    return null;
   }
 
   @override
@@ -505,19 +502,25 @@ class _CupertinoBackGestureDetectorState<T>
     assert(debugCheckHasDirectionality(context));
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
-    var dragAreaWidth = Directionality.of(context) == TextDirection.ltr
-        ? MediaQuery.of(context).padding.left
-        : MediaQuery.of(context).padding.right;
-    dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
+    // var dragAreaWidth = Directionality.of(context) == TextDirection.ltr
+    //     ? MediaQuery.of(context).padding.left
+    //     : MediaQuery.of(context).padding.right;
+    var dragAreaHeight = MediaQuery
+        .of(context)
+        .padding
+        .top;
+    // dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
+    dragAreaHeight = max(dragAreaHeight, _kBackGestureHeight);
     return Stack(
       fit: StackFit.passthrough,
       children: <Widget>[
         widget.child,
         PositionedDirectional(
           start: 0.0,
-          width: dragAreaWidth,
+          // width: dragAreaWidth,
+          height: dragAreaHeight,
           top: 0.0,
-          bottom: 0.0,
+          end: 0.0,
           child: Listener(
             onPointerDown: _handlePointerDown,
             behavior: HitTestBehavior.translucent,
@@ -533,10 +536,9 @@ class _CupertinoBackGestureController<T> {
   ///
   /// The [navigator] and [controller] arguments must not be null.
   _CupertinoBackGestureController({
-    @required this.navigator,
-    @required this.controller,
-  })  : assert(navigator != null),
-        assert(controller != null) {
+    required this.navigator,
+    required this.controller,
+  }) {
     navigator.didStartUserGesture();
   }
 
@@ -579,7 +581,8 @@ class _CupertinoBackGestureController<T> {
           _kMaxDroppedSwipePageForwardAnimationTime,
           0,
           controller.value,
-        ).floor(),
+        )!
+            .floor(),
         _kMaxPageBackAnimationTime,
       );
       controller.animateTo(1.0,
@@ -597,7 +600,8 @@ class _CupertinoBackGestureController<T> {
           0,
           _kMaxDroppedSwipePageForwardAnimationTime,
           controller.value,
-        ).floor();
+        )!
+            .floor();
         controller.animateBack(
           0.0,
           duration: Duration(milliseconds: droppedPageBackAnimationTime),
@@ -610,7 +614,7 @@ class _CupertinoBackGestureController<T> {
       // Keep the userGestureInProgress in true state so we don't change the
       // curve of the page transition mid-flight since CupertinoPageTransition
       // depends on userGestureInProgress.
-      AnimationStatusListener animationStatusCallback;
+      late AnimationStatusListener animationStatusCallback;
       animationStatusCallback = (status) {
         navigator.didStopUserGesture();
         controller.removeStatusListener(animationStatusCallback);
